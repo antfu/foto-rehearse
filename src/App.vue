@@ -11,6 +11,18 @@
         </div>
       </div>
 
+      <div class="tabs">
+        <div class="tab" :class="{active: tab===0}" @click="tab=0">
+          1
+        </div>
+        <div class="tab" :class="{active: tab===1}" @click="tab=1">
+          2
+        </div>
+        <div class="tab" :class="{active: tab===2}" @click="tab=2">
+          3
+        </div>
+      </div>
+
       <div class="grid">
         <post
           v-for="(post, idx) in posts"
@@ -39,8 +51,8 @@
 
 <script>
 /* eslint-disable no-self-assign */
-import { computed, ref } from 'vue'
-import { useWindowSize } from './utils.js'
+import { computed, ref, watch } from 'vue'
+import { useWindowSize, loadPosts, savePosts } from './utils.js'
 import Post from './Post.vue'
 
 export default {
@@ -49,11 +61,8 @@ export default {
   },
   setup() {
     const { width, height } = useWindowSize()
-    const posts = ref(
-      Array(15)
-        .fill(null)
-        .map((_, idx) => ({ url: '', id: idx })),
-    )
+    const tab = ref(0)
+    const posts = ref(loadPosts(tab.value))
 
     const PHONE_RATIO = 0.55
     const caseStyle = computed(() => ({
@@ -80,7 +89,24 @@ export default {
       e.preventDefault()
     }
 
+    watch(
+      posts,
+      () => {
+        savePosts(posts.value, tab.value)
+      }, {
+        deep: true,
+      },
+    )
+
+    watch(
+      tab,
+      () => {
+        posts.value = loadPosts(tab.value)
+      },
+    )
+
     return {
+      tab,
       width,
       height,
       caseStyle,
@@ -98,6 +124,8 @@ export default {
 :root
   --theme-primary #d37070
   --post-width 100px
+  --theme-foreground #0007
+  --theme-background white
 
 html, body, .app
   margin 0
@@ -111,13 +139,36 @@ a
   text-decoration none
   color var(--theme-primary)
 
+.tabs
+  padding 1rem
+  position absolute
+  top 0
+  right 0
+
+  .tab
+    padding 0.5rem
+    display inline-block
+    color var(--theme-primary)
+    cursor pointer
+    margin 0 0.1rem
+    width 1rem
+    height 1rem
+    line-height 1rem
+    text-align center
+
+    &.active
+      background var(--theme-primary)
+      color var(--theme-background)
+      font-weight normal
+
 .phone-case
-  background white
+  background var(--theme-background)
   height 100vh
   margin 0 auto
   overflow-y auto
   overflow-x hidden
   scrollbar-width none
+  position relative
 
   &::-webkit-scrollbar
     display block
@@ -129,6 +180,7 @@ a
 
     .header
       font-size 1.5rem
+      font-weight 100
 
     .author
       font-size 0.9rem

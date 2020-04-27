@@ -1,9 +1,9 @@
 <template>
   <div ref="frame" class="frame" :style="style">
     <input
-      v-if="!post.url"
       class="upload"
       type="file"
+      multiple
       accept="*/image"
       @change="onImageSelect"
     >
@@ -62,6 +62,7 @@ export default {
   background-position center
   background-size cover
   overflow hidden
+  width 100%
 
   .upload
     position absolute
