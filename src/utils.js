@@ -66,6 +66,8 @@ export function savePosts(db, posts = [], tab = 0) {
 
   const count = posts.length
 
+  store.clear()
+
   for (let i = 0; i < count; i++)
     store.put({ id: i.toString(), url: posts[i].url })
 }

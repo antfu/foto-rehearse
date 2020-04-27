@@ -50,15 +50,15 @@
         and
         <a>♥️</a>
       </div>
-
-      <div
-        class="trashbin"
-        :class="{active:dragging}"
-        @drop.native="dropRemove"
-        @dragover.native="allowDrop"
-      >
-        Remove
-      </div>
+    </div>
+    <div
+      class="trashbin"
+      :class="{active:dragging}"
+      :style="caseStyle"
+      @drop.native="dropRemove"
+      @dragover.native="allowDrop"
+    >
+      Remove
     </div>
   </div>
 </template>
@@ -146,6 +146,7 @@ export default {
       tab,
       size,
       caseStyle,
+      caseWidth,
       posts,
       handleUploaded,
       drop,
@@ -169,7 +170,7 @@ html, body, .app
   margin 0
   height 100vh
   width 100vw
-  background grey
+  background #222
   font-family 'Manrope',-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif
   font-weight 100
 
@@ -202,11 +203,12 @@ a
 .phone-case
   background var(--theme-background)
   height 100vh
-  margin 0 auto
   overflow-y auto
   overflow-x hidden
   scrollbar-width none
   position relative
+  left 50%
+  transform translateX(-50%)
 
   &::-webkit-scrollbar
     display block
@@ -227,7 +229,7 @@ a
   .footer
     padding 1rem
     font-size 0.9rem
-    color #0008
+    color var(--theme-foreground)
 
   .grid
     display grid
@@ -237,15 +239,16 @@ a
 .trashbin
   position fixed
   bottom 0
-  left 0
+  left 50%
   right 0
-  padding 1rem
+  padding 1rem 0
   background #bd3a3a
   color white
   transition .2s ease-in
-  transform translateY(100%)
+  transform translate(-50%, 100%)
   text-align center
+  opacity 1
 
   &.active
-    transform translateY(0)
+    transform translate(-50%, 0)
 </style>
