@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "rimraf dist && mkdir dist && vite build"
+    "build": "rimraf dist && mkdir dist && vite build && cp index-patch.html dist/index.html"
   },
   "dependencies": {
     "@vueuse/core": "^3.0.26",
