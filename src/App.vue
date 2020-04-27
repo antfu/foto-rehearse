@@ -17,6 +17,10 @@
           :key="post.id"
           :post="post"
           :width="width"
+          :draggable="true"
+          @drop.native="e=>drop(idx, e)"
+          @dragover.native="allowDrop"
+          @dragstart.native="e=>drag(idx, e)"
           @upload="urls=>handleUploaded(idx,urls)"
         />
       </div>
@@ -35,7 +39,6 @@
 
 <script>
 /* eslint-disable no-self-assign */
-
 import { computed, ref } from 'vue'
 import { useWindowSize } from './utils.js'
 import Post from './Post.vue'
@@ -66,7 +69,27 @@ export default {
       posts.value = posts.value
     }
 
-    return { width, caseStyle, posts, handleUploaded }
+    const drop = (to, e) => {
+      const from = +e.dataTransfer.getData('idx')
+      posts.value.splice(to, 0, posts.value.splice(from, 1)[0])
+    }
+    const drag = (idx, e) => {
+      e.dataTransfer.setData('idx', idx)
+    }
+    const allowDrop = (e) => {
+      e.preventDefault()
+    }
+
+    return {
+      width,
+      height,
+      caseStyle,
+      posts,
+      handleUploaded,
+      drop,
+      drag,
+      allowDrop,
+    }
   },
 }
 </script>
