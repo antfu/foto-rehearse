@@ -52,7 +52,7 @@
 <script>
 /* eslint-disable no-self-assign */
 import { computed, ref, watch } from 'vue'
-import { useWindowSize, loadPosts, savePosts } from './utils.js'
+import { useWindowSize, loadPosts, savePosts, openDb } from './utils.js'
 import Post from './Post.vue'
 
 export default {
@@ -62,7 +62,14 @@ export default {
   setup() {
     const { width, height } = useWindowSize()
     const tab = ref(0)
-    const posts = ref(loadPosts(tab.value))
+    const posts = ref([])
+    let db
+
+    openDb().then(async(i) => {
+      db = i
+      window.db = db
+      posts.value = await loadPosts(db, tab.value)
+    })
 
     const PHONE_RATIO = 0.55
     const caseStyle = computed(() => ({
@@ -92,7 +99,7 @@ export default {
     watch(
       posts,
       () => {
-        savePosts(posts.value, tab.value)
+        savePosts(db, posts.value, tab.value)
       }, {
         deep: true,
       },
@@ -100,8 +107,8 @@ export default {
 
     watch(
       tab,
-      () => {
-        posts.value = loadPosts(tab.value)
+      async() => {
+        posts.value = await loadPosts(db, tab.value)
       },
     )
 

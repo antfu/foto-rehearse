@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import { ref, onMounted, onUnmounted } from 'vue'
 
 function useEventListener(type, listener, options, target) {
@@ -22,19 +23,51 @@ export function useWindowSize() {
 
 const STORE_PREFIX = 'instagram-rehearser-posts'
 
-export function loadPosts(tab = 0) {
-  const count = +(localStorage.getItem(`${STORE_PREFIX}-${tab}-count`) || '30')
-  return Array(count)
-    .fill(null)
-    .map((_, idx) => ({ url: localStorage.getItem(`${STORE_PREFIX}-${tab}-${idx}`), id: idx }))
+export function openDb() {
+  return new Promise((resolve) => {
+    const request = window.indexedDB.open(STORE_PREFIX, 1)
+
+    request.onerror = function(event) {
+      alert(`Failed to open db:\n${event.toString()}`)
+    }
+
+    request.onsuccess = function(event) {
+      resolve(request.result)
+    }
+
+    request.onupgradeneeded = function(event) {
+      const db = event.target.result
+      for (let i = 0; i < 5; i++) {
+        if (!db.objectStoreNames.contains(`posts-${i}`))
+          db.createObjectStore(`posts-${i}`, { keyPath: 'id' })
+      }
+    }
+  })
 }
 
-export function savePosts(posts = [], tab = 0) {
+export function loadPosts(db, tab = 0) {
+  return new Promise((resolve) => {
+    const store = db.transaction([`posts-${tab}`], 'readwrite')
+      .objectStore(`posts-${tab}`)
+    const request = store.getAll()
+    request.onsuccess = () => {
+      let posts = request.result
+      if (!posts || !posts.length)
+        posts = new Array(15).fill(null).map((_, id) => ({ id, url: '' }))
+      posts.sort((a, b) => a.id - b.id)
+      resolve(posts)
+    }
+  })
+}
+
+export function savePosts(db, posts = [], tab = 0) {
+  const store = db.transaction([`posts-${tab}`], 'readwrite')
+    .objectStore(`posts-${tab}`)
+
   const count = posts.length
 
-  localStorage.setItem(`${STORE_PREFIX}-${tab}-count`, count.toString())
   for (let i = 0; i < count; i++)
-    localStorage.setItem(`${STORE_PREFIX}-${tab}-${i}`, posts[i].url)
+    store.put({ id: i.toString(), url: posts[i].url })
 }
 
 export function resizedataURL(url, MAX_WIDTH = 512, MAX_HEIGHT = 512) {
