@@ -26,15 +26,20 @@
       <div class="grid">
         <post
           v-for="(post, idx) in posts"
-          :key="post.id"
+          :key="idx"
           :post="post"
-          :width="width"
+          :size="size"
           :draggable="true"
           @drop.native="e=>drop(idx, e)"
           @dragover.native="allowDrop"
           @dragstart.native="e=>drag(idx, e)"
           @upload="urls=>handleUploaded(idx,urls)"
         />
+        <post :size="size" @click.native="add">
+          <div class="icon">
+            <span class="iconify" data-icon="mdi:plus" />
+          </div>
+        </post>
       </div>
 
       <div class="footer">
@@ -44,6 +49,15 @@
         <a href="https://github.com/antfu/vueuse">vueuse</a>
         and
         <a>♥️</a>
+      </div>
+
+      <div
+        class="trashbin"
+        :class="{active:dragging}"
+        @drop.native="dropRemove"
+        @dragover.native="allowDrop"
+      >
+        Remove
       </div>
     </div>
   </div>
@@ -63,6 +77,8 @@ export default {
     const { width, height } = useWindowSize()
     const tab = ref(0)
     const posts = ref([])
+    const gap = ref(3)
+    const dragging = ref(false)
     let db
 
     openDb().then(async(i) => {
@@ -72,28 +88,41 @@ export default {
     })
 
     const PHONE_RATIO = 0.55
+    const caseWidth = computed(() => {
+      const isDesktop = width.value / height.value > PHONE_RATIO
+      return isDesktop ? height.value * PHONE_RATIO : width.value
+    })
+    const size = computed(() => {
+      return (caseWidth.value - gap.value * 2) / 3
+    })
     const caseStyle = computed(() => ({
-      width: width.value / height.value > PHONE_RATIO
-        ? `${height.value * PHONE_RATIO}px`
-        : '100vw',
+      width: `${caseWidth.value}px`,
     }))
 
     const handleUploaded = (index, urls) => {
       for (let i = 0; i < urls.length; i++)
         posts.value[i + index].url = urls[i]
-
-      posts.value = posts.value
     }
 
     const drop = (to, e) => {
+      dragging.value = false
       const from = +e.dataTransfer.getData('idx')
       posts.value.splice(to, 0, posts.value.splice(from, 1)[0])
     }
+    const dropRemove = (e) => {
+      dragging.value = false
+      const from = +e.dataTransfer.getData('idx')
+      posts.value.splice(from, 1)
+    }
     const drag = (idx, e) => {
+      dragging.value = true
       e.dataTransfer.setData('idx', idx)
     }
     const allowDrop = (e) => {
       e.preventDefault()
+    }
+    const add = () => {
+      posts.value.push({ url: '' })
     }
 
     watch(
@@ -113,15 +142,17 @@ export default {
     )
 
     return {
+      dragging,
       tab,
-      width,
-      height,
+      size,
       caseStyle,
       posts,
       handleUploaded,
       drop,
       drag,
       allowDrop,
+      dropRemove,
+      add,
     }
   },
 }
@@ -202,4 +233,19 @@ a
     display grid
     grid-template-columns 1fr 1fr 1fr
     grid-gap 3px
+
+.trashbin
+  position fixed
+  bottom 0
+  left 0
+  right 0
+  padding 1rem
+  background #bd3a3a
+  color white
+  transition .2s ease-in
+  transform translateY(100%)
+  text-align center
+
+  &.active
+    transform translateY(0)
 </style>

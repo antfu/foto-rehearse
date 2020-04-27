@@ -1,55 +1,39 @@
 <template>
   <div ref="frame" class="frame" :style="style">
-    <input
-      class="upload"
-      type="file"
-      multiple
-      accept="*/image"
-      @change="onImageSelect"
-    >
+    <slot>
+      <input
+        class="upload"
+        type="file"
+        multiple
+        accept="*/image"
+        @change="onImageSelect"
+      >
+    </slot>
   </div>
 </template>
 
 <script>
-import { ref, watch, onMounted } from 'vue'
+import { computed } from 'vue'
 import { getDataUrls } from './utils.js'
 
 export default {
   props: {
-    width: { type: Number, default: 0 },
+    size: { type: Number, default: 0 },
     post: { type: Object, default: () => ({ url: '' }) },
   },
   setup(props, ctx) {
-    const style = ref({ height: '100px' })
-    const frame = ref(null)
-
-    onMounted(() => {
-      watch(
-        () => props.width,
-        () => {
-          setTimeout(() => {
-            if (frame.value)
-              style.value.height = `${frame.value.clientWidth}px`
-          }, 1)
-        },
-        { immediate: true },
-      )
-
-      watch(
-        () => props.post.url,
-        () => {
-          style.value.backgroundImage = `url(${props.post.url})`
-        },
-        { immediate: true },
-      )
-    })
+    const style = computed(() => ({
+      width: `${props.size}px`,
+      height: `${props.size}px`,
+      backgroundImage: `url(${props.post.url})`,
+    }))
 
     const onImageSelect = async(e) => {
       const urls = await getDataUrls(e.target.files)
       ctx.emit('upload', urls)
     }
 
-    return { style, frame, onImageSelect }
+    return { style, onImageSelect }
   },
 }
 </script>
@@ -71,4 +55,13 @@ export default {
     right 0
     bottom 0
     opacity 0
+    width 100%
+
+  .icon
+    position absolute
+    top 50%
+    left 50%
+    font-size 5rem
+    opacity 0.1
+    transform translate(-50%, -50%)
 </style>
