@@ -226,6 +226,7 @@ export default {
   --theme-shadow #0001
 
 html, body, .app
+  user-select none
   margin 0
   height 100vh
   width 100vw
