@@ -36,3 +36,7 @@ Powered by <a href='https://github.com/vuejs/vite'>Vite</a>, <a href='https://gi
 
 - Post scheduler
 - Built-in photo editing
+
+## License
+
+The code is licensed under [MIT](./LICENSE) and photos in the screenshots are from https://unsplash.com/ with their [Unsplash License](https://unsplash.com/license).
