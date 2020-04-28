@@ -143,3 +143,17 @@ export function popup(url, name, width, height, close = false) {
     window.close()
   }
 }
+
+export const rgbToHex = (r, g, b) => {
+  return `#${[r, g, b].map((x) => {
+    const hex = x.toString(16)
+    return hex.length === 1 ? `0${hex}` : hex
+  }).join('')}`
+}
+
+export function getColor(url) {
+  const img = document.createElement('img')
+  img.src = url
+  const rgb = new window.ColorThief().getColor(img)
+  return rgbToHex(...rgb)
+}

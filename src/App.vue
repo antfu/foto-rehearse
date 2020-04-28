@@ -1,6 +1,6 @@
 <template>
   <div class="app" :class="{dark}">
-    <div class="phone-case" :style="caseStyle">
+    <div id="phone-case" :style="caseStyle">
       <div class="nav">
         <div v-if="width > 300" class="header">
           Instagram<br><b>Rehearse</b>
@@ -9,9 +9,11 @@
           <div v-if="isDesktop" class="icon button" @click="openPopup">
             <span class="iconify" data-icon="mdi-light:arrange-send-backward" />
           </div>
+
           <div class="icon button" @click="addFront">
             <span class="iconify" data-icon="mdi-light:plus-circle" />
           </div>
+
           <div class="icon button" @click="dark = !dark">
             <div v-show="dark">
               <span class="iconify" data-icon="mdi-light:lightbulb-on" />
@@ -20,9 +22,20 @@
               <span class="iconify" data-icon="mdi-light:lightbulb" />
             </div>
           </div>
+
           <div class="icon button" @click="gap = gap ? 0 : 3">
             <span class="iconify" data-icon="mdi-light:border-outside" />
           </div>
+
+          <div class="icon button" @click="imageMode = (imageMode +1) % 2">
+            <div v-show="imageMode == 0">
+              <span class="iconify" data-icon="mdi-light:picture" />
+            </div>
+            <div v-show="imageMode == 1">
+              <span class="iconify" data-icon="mdi-light:flask" />
+            </div>
+          </div>
+
           <div class="icon button" @click="tab = (tab + 1) % 3">
             <span class="iconify" data-icon="mdi-light:shape-circle" />
             <span class="number">{{ tab+1 }}</span>
@@ -36,6 +49,7 @@
           :key="idx"
           :post="post"
           :size="size"
+          :mode="imageMode"
           :draggable="true"
           @drop.native="e=>drop(idx, e)"
           @dragend.native="dragend"
@@ -96,6 +110,7 @@ export default {
     const gap = ref(3)
     const dragging = ref(false)
     const dark = ref(false)
+    const imageMode = ref(0) // 0: photo, 1: thief
     let db
 
     openDb().then(async(i) => {
@@ -193,6 +208,7 @@ export default {
       dropRemove,
       add,
       addFront,
+      imageMode,
     }
   },
 }
@@ -264,7 +280,7 @@ a
     font-size 0.8rem
     user-select none
 
-.phone-case
+#phone-case
   background var(--theme-background)
   height 100vh
   overflow-y auto

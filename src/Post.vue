@@ -14,19 +14,29 @@
 
 <script>
 import { computed } from 'vue'
-import { getDataUrls } from './utils.js'
+import { getDataUrls, getColor } from './utils.js'
 
 export default {
   props: {
     size: { type: Number, default: 0 },
+    mode: { type: Number, default: 0 },
     post: { type: Object, default: () => ({ url: '' }) },
   },
   setup(props, ctx) {
-    const style = computed(() => ({
-      width: `${props.size}px`,
-      height: `${props.size}px`,
-      backgroundImage: `url(${props.post.url})`,
-    }))
+    const style = computed(() => {
+      const obj = {
+        width: `${props.size}px`,
+        height: `${props.size}px`,
+      }
+      if (props.post.url) {
+        if (props.mode === 0)
+          obj.backgroundImage = `url(${props.post.url})`
+
+        else if (props.mode === 1)
+          obj.backgroundColor = getColor(props.post.url)
+      }
+      return obj
+    })
 
     const onImageSelect = async(e) => {
       const urls = await getDataUrls(e.target.files)
