@@ -229,15 +229,13 @@ export async function getDataUrls(files) {
   )
 }
 
-export function popup(url, name, width, height, close = false) {
-  const newWin = window.open(url, name, `height=${height},width=${width}`)
-  if (window.focus)
-    newWin.focus()
-  if (close) {
-    window.open('', '_parent', '')
-    window.close()
-    location.href = 'about:blank'
-  }
+export async function popup(url, name, width, height) {
+  return new Promise((resolve) => {
+    const newWin = window.open(url, name, `height=${height},width=${width}`)
+    newWin.addEventListener('beforeunload', () => resolve())
+    if (window.focus)
+      newWin.focus()
+  })
 }
 
 export function rgbToHex(r, g, b) {

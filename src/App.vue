@@ -1,5 +1,5 @@
 <template>
-  <div class="app" :class="{dark, shooting}">
+  <div v-if="!locked" class="app" :class="{dark, shooting}">
     <div id="phone-case" :style="caseStyle">
       <div id="phone-case-inner">
         <div class="nav">
@@ -11,7 +11,7 @@
               <span class="iconify" data-icon="mdi-light:camera" />
             </div>
 
-            <div v-if="isDesktop" class="icon button" @click="openPopup">
+            <div v-if="isDesktop && !inPopup" class="icon button" @click="openPopup">
               <span class="iconify" data-icon="mdi-light:arrange-send-backward" />
             </div>
 
@@ -136,6 +136,7 @@ export default {
     const posts = ref([])
     const dragging = ref(false)
     const shooting = ref(false)
+    const locked = ref(false)
     const imageMode = ref(0) // 0: photo, 1: thief, 2: pattele
     let db
 
@@ -202,8 +203,10 @@ export default {
     const addFront = () => {
       posts.value.unshift({ url: '' })
     }
-    const openPopup = () => {
-      popup(location.href, 'igre', caseWidth.value, height.value, true)
+    const openPopup = async() => {
+      locked.value = true
+      await popup(location.href, 'foto-rehearse', caseWidth.value, height.value)
+      location.reload()
     }
     const shoot = () => {
       shooting.value = true
@@ -230,6 +233,7 @@ export default {
     )
 
     return {
+      inPopup: window.name === 'foto-rehearse',
       shoot,
       height,
       width,
@@ -238,6 +242,7 @@ export default {
       dragging,
       tab,
       size,
+      locked,
       shooting,
       isDesktop,
       caseStyle,
