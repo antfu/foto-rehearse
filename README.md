@@ -3,17 +3,17 @@
 </p>
 
 <p align='center'>
-
 Free and Open photography post planner.
-
-Powered by [Vue Vite](https://github.com/vuejs/vite), [VueUse](https://github.com/antfu/vueuse) and ♥️ with the new [Vue Composition API](https://composition-api.vuejs.org/)!
-
 </p>
 
 <p align='center'>
+<b>
+Try <a href='https://fore.netlify.app'>the App</a> now!
+</b>
+</p>
 
-Check out the [App](https://fore.netlify.app)!
-
+<p align='center'>
+Powered by <a href='https://github.com/vuejs/vite'>Vite</a>, <a href='https://github.com/antfu/vueuse'>VueUse</a> and ♥️ with the new <a href='https://composition-api.vuejs.org/'>Vue Composition API</a>!
 </p>
 
 ## Checklist
