@@ -71,7 +71,9 @@
       <div class="footer">
         <div class="author">
           by
-          <a href="https://github.com/antfu"> Anthony Fu</a>
+          <a href="https://www.instagram.com/antfu7">@antfu</a>
+          for
+          <a href="https://www.instagram.com/iiiiiiines__">@ines</a>
         </div>
         <div class="powered">
           powered by

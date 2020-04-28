@@ -8,7 +8,7 @@ Free and Open photography post planner.
 
 <p align='center'>
 <b>
-Try <a href='https://fore.netlify.app'>the App</a> now!
+<a href='https://foto.inesfendi.com/'>Try the App now!</a>
 </b>
 </p>
 
