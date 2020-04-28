@@ -6,8 +6,6 @@ export const CONFIG_PREFIX = 'foto-rehearse-config'
 const DEFAULT_POSTS = 8
 const DEFAULT_IMAGES = [
   '/examples/photo-1588055312392-97068a233ee2.jpeg',
-  '/examples/photo-1588056008734-1600aa6420e6.jpeg',
-  '/examples/photo-1588055945372-9bd550cc3a57.jpeg',
 ]
 
 function useEventListener(type, listener, options, target) {
