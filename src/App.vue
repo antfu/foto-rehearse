@@ -31,6 +31,7 @@
           :size="size"
           :draggable="true"
           @drop.native="e=>drop(idx, e)"
+          @dragend.native="dragend"
           @dragover.native="allowDrop"
           @dragenter.native="allowDrop"
           @dragstart.native="e=>drag(idx, e)"
@@ -119,6 +120,13 @@ export default {
     const drag = (idx, e) => {
       dragging.value = true
       e.dataTransfer.setData('idx', idx)
+      try {
+        window.navigator.vibrate(100)
+      }
+      catch {}
+    }
+    const dragend = () => {
+      dragging.value = false
     }
     const allowDrop = (e) => {
       e.preventDefault()
@@ -150,6 +158,7 @@ export default {
       size,
       caseStyle,
       caseWidth,
+      dragend,
       posts,
       handleUploaded,
       drop,
