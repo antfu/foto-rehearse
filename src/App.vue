@@ -1,29 +1,38 @@
 <template>
-  <div class="app">
+  <div class="app" :class="{dark}">
     <div class="phone-case" :style="caseStyle">
-      <div class="profile">
+      <div class="nav">
         <div class="header">
-          Instagram<b>Rehearser</b>
+          Instagram<br><b>Rehearser</b>
         </div>
-        <div class="author">
-          by
-          <a href="https://github.com/antfu"> Anthony Fu</a>
+        <div class="buttons">
+          <div v-if="isDesktop" class="icon button" @click="openPopup">
+            <span class="iconify" data-icon="mdi-light:arrange-send-backward" />
+          </div>
+          <div class="icon button" @click="addFront">
+            <span class="iconify" data-icon="mdi-light:plus-circle" />
+          </div>
+          <div class="icon button" @click="dark = !dark">
+            <span class="iconify" data-icon="mdi-light:lightbulb" />
+          </div>
+          <div class="icon button" @click="gap = gap ? 0 : 3">
+            <span class="iconify" data-icon="mdi-light:border-outside" />
+          </div>
+        </div>
+        <div class="tabs">
+          <div class="tab" :class="{active: tab===0}" @click="tab=0">
+            1
+          </div>
+          <div class="tab" :class="{active: tab===1}" @click="tab=1">
+            2
+          </div>
+          <div class="tab" :class="{active: tab===2}" @click="tab=2">
+            3
+          </div>
         </div>
       </div>
 
-      <div class="tabs">
-        <div class="tab" :class="{active: tab===0}" @click="tab=0">
-          1
-        </div>
-        <div class="tab" :class="{active: tab===1}" @click="tab=1">
-          2
-        </div>
-        <div class="tab" :class="{active: tab===2}" @click="tab=2">
-          3
-        </div>
-      </div>
-
-      <div class="grid">
+      <div class="grid" :style="{ gridGap: `${gap}px` }">
         <post
           v-for="(post, idx) in posts"
           :key="idx"
@@ -39,7 +48,7 @@
         />
         <post :size="size" @click.native="add">
           <div class="icon">
-            <span class="iconify" data-icon="mdi:plus" />
+            <span class="iconify" data-icon="mdi-light:plus-circle" />
           </div>
         </post>
       </div>
@@ -51,6 +60,11 @@
         <a href="https://github.com/antfu/vueuse">vueuse</a>
         and
         <a>♥️</a>
+
+        <div class="author">
+          by
+          <a href="https://github.com/antfu"> Anthony Fu</a>
+        </div>
       </div>
     </div>
     <div
@@ -69,7 +83,7 @@
 <script>
 /* eslint-disable no-self-assign */
 import { computed, ref, watch } from 'vue'
-import { useWindowSize, loadPosts, savePosts, openDb } from './utils.js'
+import { useWindowSize, loadPosts, savePosts, openDb, popup } from './utils.js'
 import Post from './Post.vue'
 
 export default {
@@ -82,6 +96,7 @@ export default {
     const posts = ref([])
     const gap = ref(3)
     const dragging = ref(false)
+    const dark = ref(false)
     let db
 
     openDb().then(async(i) => {
@@ -91,9 +106,11 @@ export default {
     })
 
     const PHONE_RATIO = 0.55
+    const isDesktop = computed(() => {
+      return width.value / height.value > PHONE_RATIO
+    })
     const caseWidth = computed(() => {
-      const isDesktop = width.value / height.value > PHONE_RATIO
-      return isDesktop ? height.value * PHONE_RATIO : width.value
+      return isDesktop.value ? height.value * PHONE_RATIO - 5 : width.value
     })
     const size = computed(() => {
       return (caseWidth.value - gap.value * 2) / 3
@@ -101,12 +118,10 @@ export default {
     const caseStyle = computed(() => ({
       width: `${caseWidth.value}px`,
     }))
-
     const handleUploaded = (index, urls) => {
       for (let i = 0; i < urls.length; i++)
         posts.value[i + index].url = urls[i]
     }
-
     const drop = (to, e) => {
       dragging.value = false
       const from = +e.dataTransfer.getData('idx')
@@ -135,6 +150,12 @@ export default {
     const add = () => {
       posts.value.push({ url: '' })
     }
+    const addFront = () => {
+      posts.value.unshift({ url: '' })
+    }
+    const openPopup = () => {
+      popup(location.href, 'igre', caseWidth.value, height.value, true)
+    }
 
     watch(
       posts,
@@ -153,19 +174,24 @@ export default {
     )
 
     return {
+      gap,
+      dark,
       dragging,
       tab,
       size,
+      isDesktop,
       caseStyle,
       caseWidth,
       dragend,
       posts,
+      openPopup,
       handleUploaded,
       drop,
       drag,
       allowDrop,
       dropRemove,
       add,
+      addFront,
     }
   },
 }
@@ -175,8 +201,9 @@ export default {
 :root
   --theme-primary #d37070
   --post-width 100px
-  --theme-foreground #0007
+  --theme-foreground #000d
   --theme-background white
+  --theme-shadow #0001
 
 html, body, .app
   margin 0
@@ -186,15 +213,20 @@ html, body, .app
   font-family 'Manrope',-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif
   font-weight 100
 
+.app
+  color var(--theme-foreground)
+
+  &.dark
+    --theme-foreground white
+    --theme-background black
+    --theme-shadow #ffffff18
+
 a
   text-decoration none
   color var(--theme-primary)
 
 .tabs
-  padding 1rem
-  position absolute
-  top 0
-  right 0
+  padding 0.5rem 1rem
 
   .tab
     padding 0.5rem
@@ -202,15 +234,24 @@ a
     color var(--theme-primary)
     cursor pointer
     margin 0 0.1rem
-    width 1rem
-    height 1rem
-    line-height 1rem
+    width 0.8rem
+    height 0.8rem
+    line-height 0.8rem
     text-align center
 
     &.active
       background var(--theme-primary)
       color var(--theme-background)
       font-weight normal
+
+.icon.button
+  display inline-block
+  font-size 1.2rem
+  cursor pointer
+  padding 0.3rem
+
+  &:hover
+    background #8881
 
 .phone-case
   background var(--theme-background)
@@ -226,17 +267,19 @@ a
     display block
     width 0px
 
-  .profile
-    padding 0.5rem 1rem
-    margin-bottom 1rem
+  .nav
+    margin-bottom 0.3rem
+    display grid
+    grid-template-columns max-content auto max-content
+
+    & > *
+      margin auto 0
 
     .header
-      font-size 1.5rem
+      padding 1.3rem
+      font-size 1.3rem
       font-weight 100
-
-    .author
-      font-size 0.9rem
-      opacity 0.8
+      line-height 1.3rem
 
   .footer
     padding 1rem
@@ -246,7 +289,6 @@ a
   .grid
     display grid
     grid-template-columns 1fr 1fr 1fr
-    grid-gap 3px
 
 .trashbin
   position fixed

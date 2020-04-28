@@ -40,7 +40,7 @@ export default {
 
 <style lang="stylus">
 .frame
-  background #0001
+  background var(--theme-shadow)
   position relative
   background-repeat no-repeat
   background-position center
