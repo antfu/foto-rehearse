@@ -8,13 +8,16 @@
         accept="*/image"
         @change="onImageSelect"
       >
+      <div v-if="mode === 2" class="dots" :style="dotsStyle">
+        <div v-for="c of colors.slice(1)" :key="c" class="dot" :style="{background:c}" />
+      </div>
     </slot>
   </div>
 </template>
 
 <script>
-import { computed } from 'vue'
-import { getDataUrls, getColor } from './utils.js'
+import { computed, ref } from 'vue'
+import { getDataUrls, getColors } from './utils.js'
 
 export default {
   props: {
@@ -23,6 +26,14 @@ export default {
     post: { type: Object, default: () => ({ url: '' }) },
   },
   setup(props, ctx) {
+    const gap = ref(8)
+
+    const colors = computed(() => {
+      if (props.post.url)
+        return getColors(props.post.url, 5)
+      return []
+    })
+
     const style = computed(() => {
       const obj = {
         width: `${props.size}px`,
@@ -32,10 +43,18 @@ export default {
         if (props.mode === 0)
           obj.backgroundImage = `url(${props.post.url})`
 
-        else if (props.mode === 1)
-          obj.backgroundColor = getColor(props.post.url)
+        else if (props.mode === 1 || props.mode === 2)
+          obj.backgroundColor = colors.value[0]
       }
       return obj
+    })
+
+    const dotsStyle = computed(() => {
+      return {
+        height: `${(props.size - gap.value * 5) / 4}px`,
+        gridGap: `${gap.value}px`,
+        margin: `${gap.value}px`,
+      }
     })
 
     const onImageSelect = async(e) => {
@@ -43,7 +62,7 @@ export default {
       ctx.emit('upload', urls)
     }
 
-    return { style, onImageSelect }
+    return { gap, colors, dotsStyle, style, onImageSelect }
   },
 }
 </script>
@@ -74,4 +93,15 @@ export default {
     font-size 5rem
     opacity 0.1
     transform translate(-50%, -50%)
+
+  .dots
+    position absolute
+    left 0
+    bottom 0
+    right 0
+    display grid
+    height 30px
+    grid-template-columns 1fr 1fr 1fr 1fr
+    grid-gap 5px
+    margin 5px
 </style>

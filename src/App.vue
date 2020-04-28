@@ -27,11 +27,14 @@
             <span class="iconify" data-icon="mdi-light:border-outside" />
           </div>
 
-          <div class="icon button" @click="imageMode = (imageMode +1) % 2">
+          <div class="icon button" @click="imageMode = (imageMode +1) % 3">
             <div v-show="imageMode == 0">
               <span class="iconify" data-icon="mdi-light:picture" />
             </div>
             <div v-show="imageMode == 1">
+              <span class="iconify" data-icon="mdi-light:flask-empty" />
+            </div>
+            <div v-show="imageMode == 2">
               <span class="iconify" data-icon="mdi-light:flask" />
             </div>
           </div>
