@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { getDataUrls, getColors } from './utils.js'
 
 export default {
@@ -30,10 +30,18 @@ export default {
   setup(props, ctx) {
     const gap = ref(8)
 
-    const colors = computed(() => {
-      if (props.post.url)
-        return getColors(props.post.url, 5)
-      return []
+    const colors = ref([])
+    onMounted(() => {
+      watch(
+        () => props.post.url,
+        async() => {
+          if (props.post.url)
+            colors.value = await getColors(props.post.url, 5)
+          else
+            colors.value = []
+        },
+        { immediate: true },
+      )
     })
 
     const style = computed(() => {

@@ -151,9 +151,12 @@ export function rgbToHex(r, g, b) {
   }).join('')}`
 }
 
-export function getColors(url, amount = 5) {
+export async function getColors(url, amount = 5) {
   const img = document.createElement('img')
-  img.src = url
+  await new Promise((resolve) => {
+    img.onload = () => resolve()
+    img.src = url
+  })
   const rgbs = new window.ColorThief().getPalette(img, amount)
   return rgbs.map(rgb => rgbToHex(...rgb))
 }
