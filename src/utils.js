@@ -1,8 +1,13 @@
 /* eslint-disable no-alert */
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const DEFAULT_POSTS = 8
 const STORE_PREFIX = 'instagram-rehearser-posts'
+const DEFAULT_POSTS = 8
+const DEFAULT_IMAGES = [
+  '/examples/photo-1588055312392-97068a233ee2.jpeg',
+  '/examples/photo-1588056008734-1600aa6420e6.jpeg',
+  '/examples/photo-1588055945372-9bd550cc3a57.jpeg',
+]
 
 function useEventListener(type, listener, options, target) {
   if (target === undefined) target = window
@@ -38,10 +43,14 @@ export function openDb() {
 
     request.onupgradeneeded = function(event) {
       const db = event.target.result
+      const stores = []
       for (let i = 0; i < 5; i++) {
         if (!db.objectStoreNames.contains(`posts-${i}`))
-          db.createObjectStore(`posts-${i}`, { keyPath: 'id' })
+          stores.push(db.createObjectStore(`posts-${i}`, { keyPath: 'id' }))
       }
+
+      for (let i = 0; i < DEFAULT_POSTS; i++)
+        stores[0].put({ id: i, url: DEFAULT_IMAGES[i] || '' })
     }
   })
 }

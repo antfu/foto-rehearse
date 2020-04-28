@@ -7,6 +7,7 @@
         type="file"
         multiple
         accept="*/image"
+        title=" "
         @change="onImageSelect"
       >
       <pre v-if="mode === 1" class="info" :style="infoStyle">{{ info }}</pre>

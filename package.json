@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "rimraf dist && mkdir dist && vite build && cp ./static/*.* dist"
+    "build": "rimraf dist && mkdir dist && vite build && cp -R ./static/*.* dist/"
   },
   "dependencies": {
     "@vueuse/core": "^3.0.26",
