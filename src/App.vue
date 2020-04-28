@@ -151,7 +151,12 @@ export default {
       return width.value > 500 && width.value / height.value > PHONE_RATIO
     })
     const caseWidth = computed(() => {
-      return isDesktop.value ? height.value * PHONE_RATIO - 5 : width.value
+      return Math.min(
+        width.value,
+        isDesktop.value
+          ? height.value * PHONE_RATIO - 5
+          : width.value,
+      )
     })
     const size = computed(() => {
       return (caseWidth.value - gap.value * 2) / 3
