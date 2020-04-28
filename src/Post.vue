@@ -2,12 +2,14 @@
   <div ref="frame" class="frame" :style="style">
     <slot>
       <input
+        v-if="!post.url || mode === 0"
         class="upload"
         type="file"
         multiple
         accept="*/image"
         @change="onImageSelect"
       >
+      <pre v-if="mode === 1" class="info" :style="infoStyle">{{ info }}</pre>
       <div v-if="mode === 2" class="dots" :style="dotsStyle">
         <div v-for="c of colors.slice(1)" :key="c" class="dot" :style="{background:c}" />
       </div>
@@ -58,12 +60,44 @@ export default {
       }
     })
 
+    const info = computed(() => {
+      if (!colors.value[0])
+        return ''
+      const hex = colors.value[0]
+      const color = window.chroma(hex)
+      const [hue, sat, light] = color.hsl()
+
+      return `${hex}\n\n`
+      + `lum: ${Math.round(light * 100)}%\n`
+      + `sat: ${Math.round(sat * 100)}%\n`
+      + `hue: ${hue.toFixed(1)}%`
+    })
+
+    const infoStyle = computed(() => {
+      if (!colors.value[0])
+        return {}
+      const color = window.chroma(colors.value[0])
+      return {
+        color: color.luminance() > 0.5
+          ? color.darken(2)
+          : color.brighten(2),
+      }
+    })
+
     const onImageSelect = async(e) => {
       const urls = await getDataUrls(e.target.files)
       ctx.emit('upload', urls)
     }
 
-    return { gap, colors, dotsStyle, style, onImageSelect }
+    return {
+      gap,
+      info,
+      infoStyle,
+      colors,
+      dotsStyle,
+      style,
+      onImageSelect,
+    }
   },
 }
 </script>
@@ -105,4 +139,15 @@ export default {
 
     .dot
       border-radius 50%
+
+  .info
+    font-family monospace
+    padding 1rem
+    margin 0
+    opacity 0
+    transition .2s ease-in
+
+  &:hover
+    .info
+      opacity 1
 </style>
