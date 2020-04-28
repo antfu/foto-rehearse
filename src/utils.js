@@ -235,6 +235,6 @@ export async function getColors(url, amount = 5) {
     img.onload = () => resolve()
     img.src = url
   })
-  const rgbs = new window.ColorThief().getPalette(img, amount)
-  return rgbs.map(rgb => rgbToHex(...rgb))
+  const palette = new window.ColorThief().getPalette(img, amount)
+  return palette.map(rgb => rgbToHex(...rgb))
 }

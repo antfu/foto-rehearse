@@ -24,7 +24,12 @@
           </div>
 
           <div class="icon button" @click="gap = gap ? 0 : 3">
-            <span class="iconify" data-icon="mdi-light:border-outside" />
+            <div v-show="gap">
+              <span class="iconify" data-icon="mdi-light:border-all" />
+            </div>
+            <div v-show="!gap">
+              <span class="iconify" data-icon="mdi-light:border-outside" />
+            </div>
           </div>
 
           <div class="icon button" @click="imageMode = (imageMode +1) % 3">
@@ -40,7 +45,7 @@
           </div>
 
           <div class="icon button" @click="tab = (tab + 1) % 3">
-            <span class="iconify" data-icon="mdi-light:shape-circle" />
+            <span class="iconify" data-icon="mdi-light:shape-hexagon" />
             <span class="number">{{ tab+1 }}</span>
           </div>
         </div>
