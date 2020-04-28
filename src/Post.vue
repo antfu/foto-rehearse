@@ -15,6 +15,13 @@
         <div v-for="c of colors.slice(1)" :key="c" class="dot" :style="{background:c}" />
       </div>
     </slot>
+    <img
+      v-show="mode === 0 && loaded"
+      class="image"
+      :style="imageStyle"
+      :src="post.url"
+      @load="onLoad"
+    >
   </div>
 </template>
 
@@ -31,6 +38,8 @@ export default {
   },
   setup(props, ctx) {
     const gap = ref(8)
+    const loaded = ref(false)
+    const imageStyle = ref({})
 
     const colors = ref([])
     onMounted(() => {
@@ -42,7 +51,7 @@ export default {
           else
             colors.value = []
         },
-        { immediate: true },
+        { immediate: true, flush: 'pre' },
       )
     })
 
@@ -52,10 +61,7 @@ export default {
         height: `${props.size}px`,
       }
       if (props.post.url) {
-        if (props.mode === 0)
-          obj.backgroundImage = `url(${props.post.url})`
-
-        else if (props.mode === 1 || props.mode === 2)
+        if (props.mode === 1 || props.mode === 2)
           obj.backgroundColor = colors.value[0]
       }
       else if (props.shooting) {
@@ -102,7 +108,18 @@ export default {
       ctx.emit('upload', urls)
     }
 
+    const onLoad = (e) => {
+      loaded.value = true
+      if (e.target.height > e.target.width)
+        imageStyle.value = { width: '100%' }
+      else
+        imageStyle.value = { height: '100%' }
+    }
+
     return {
+      imageStyle,
+      loaded,
+      onLoad,
       gap,
       info,
       infoStyle,
@@ -124,6 +141,12 @@ export default {
   background-size cover
   overflow hidden
   width 100%
+
+  .image
+    position absolute
+    top 50%
+    left 50%
+    transform translate(-50%, -50%)
 
   .upload
     position absolute
