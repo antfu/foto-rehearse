@@ -76,9 +76,9 @@ export default {
       const [hue, sat, light] = color.hsl()
 
       return `${hex}\n\n`
-      + `lum: ${Math.round(light * 100)}%\n`
-      + `sat: ${Math.round(sat * 100)}%\n`
-      + `hue: ${hue.toFixed(1)}%`
+      + `lum ${Math.round(light * 100)}%\n`
+      + `sat ${Math.round(sat * 100)}%\n`
+      + `hue ${hue.toFixed(1)}°`
     })
 
     const infoStyle = computed(() => {
