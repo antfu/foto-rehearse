@@ -101,7 +101,7 @@
 <script>
 /* eslint-disable no-self-assign */
 import { computed, ref, watch } from 'vue'
-import { useWindowSize, loadPosts, savePosts, openDb, popup } from './utils.js'
+import { useWindowSize, loadPosts, savePosts, openDb, popup, useStorage, CONFIG_PREFIX } from './utils.js'
 import Post from './Post.vue'
 
 export default {
@@ -109,13 +109,14 @@ export default {
     Post,
   },
   setup() {
+    const tab = useStorage(`${CONFIG_PREFIX}-tab`, 0)
+    const gap = useStorage(`${CONFIG_PREFIX}-gap`, 3)
+    const dark = useStorage(`${CONFIG_PREFIX}-dark`, false)
+
     const { width, height } = useWindowSize()
-    const tab = ref(0)
     const posts = ref([])
-    const gap = ref(3)
     const dragging = ref(false)
-    const dark = ref(false)
-    const imageMode = ref(0) // 0: photo, 1: thief
+    const imageMode = ref(0) // 0: photo, 1: thief, 2: pattele
     let db
 
     openDb().then(async(i) => {

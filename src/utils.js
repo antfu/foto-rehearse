@@ -1,7 +1,8 @@
 /* eslint-disable no-alert */
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 
-const STORE_PREFIX = 'instagram-rehearser-posts'
+export const STORE_PREFIX = 'foto-rehearse-posts'
+export const CONFIG_PREFIX = 'foto-rehearse-config'
 const DEFAULT_POSTS = 8
 const DEFAULT_IMAGES = [
   '/examples/photo-1588055312392-97068a233ee2.jpeg',
@@ -27,6 +28,75 @@ export function useWindowSize() {
     height.value = window.innerHeight
   })
   return { width, height }
+}
+
+const Serializers = {
+  boolean: {
+    read(v) { return v === 'true' },
+    write(v) { return String(v) },
+  },
+  object: {
+    read(v, d) { return v ? JSON.parse(v) : d },
+    write(v) { return JSON.stringify(v) },
+  },
+  number: {
+    read(v, d) { return v != null ? Number.parseFloat(v) : d },
+    write(v) { return String(v) },
+  },
+  any: {
+    read(v, d) { return v !== null && v !== undefined ? v : d },
+    write(v) { return String(v) },
+  },
+  string: {
+    read(v, d) { return v !== null && v !== undefined ? v : d },
+    write(v) { return String(v) },
+  },
+}
+
+export function useStorage(key, defaultValue, storage) {
+  if (storage === undefined) storage = localStorage
+  const data = ref(defaultValue)
+  const type = defaultValue == null
+    ? 'any'
+    : typeof defaultValue === 'boolean'
+      ? 'boolean'
+      : typeof defaultValue === 'string'
+        ? 'string'
+        : typeof defaultValue === 'object'
+          ? 'object'
+        // @ts-ignore
+          : !Number.isNaN(defaultValue)
+            ? 'number'
+            : 'any'
+  function read() {
+    try {
+      let rawValue = storage.getItem(key)
+      if (rawValue === undefined && defaultValue) {
+        rawValue = Serializers[type].write(defaultValue)
+        storage.setItem(key, rawValue)
+      }
+      else {
+        data.value = Serializers[type].read(rawValue, defaultValue)
+      }
+    }
+    catch (e) {
+      console.warn(e)
+    }
+  }
+  read()
+  useEventListener('storage', read)
+  watch(data, () => {
+    try {
+      if (data.value == null)
+        storage.removeItem(key)
+      else
+        storage.setItem(key, Serializers[type].write(data.value))
+    }
+    catch (e) {
+      console.warn(e)
+    }
+  }, { flush: 'sync', deep: true })
+  return data
 }
 
 export function openDb() {
