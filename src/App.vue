@@ -32,6 +32,7 @@
           :draggable="true"
           @drop.native="e=>drop(idx, e)"
           @dragover.native="allowDrop"
+          @dragenter.native="allowDrop"
           @dragstart.native="e=>drag(idx, e)"
           @upload="urls=>handleUploaded(idx,urls)"
         />
@@ -56,6 +57,7 @@
       :class="{active:dragging}"
       :style="caseStyle"
       @drop.native="dropRemove"
+      @dragenter.native="allowDrop"
       @dragover.native="allowDrop"
     >
       Remove
@@ -120,6 +122,7 @@ export default {
     }
     const allowDrop = (e) => {
       e.preventDefault()
+      return false
     }
     const add = () => {
       posts.value.push({ url: '' })
