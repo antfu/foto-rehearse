@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { getDataUrls, getColors } from './utils.js'
 
 export default {

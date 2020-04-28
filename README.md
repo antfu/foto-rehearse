@@ -1,6 +1,10 @@
-# Instagram Rehearse
+<p align='center'>
+<img src='https://user-images.githubusercontent.com/11247099/80476156-94958b80-897c-11ea-8998-017ac7f552de.png' alt='intro'>
+</p>
 
-Instagram post planner, powered by [vite](https://github.com/vuejs/vite) and [VueUse](https://github.com/antfu/vueuse) with the new [Vue Composition API](https://composition-api.vuejs.org/)!
+Photography post planner. Powered by [Vue Vite](https://github.com/vuejs/vite), [VueUse](https://github.com/antfu/vueuse) and ♥️ with the new [Vue Composition API](https://composition-api.vuejs.org/)!
+
+Check out the [App](https://igre.netlify.app)!
 
 ## Checklist
 

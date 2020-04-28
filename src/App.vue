@@ -3,7 +3,7 @@
     <div id="phone-case" :style="caseStyle">
       <div class="nav">
         <div v-if="width > 300" class="header">
-          Instagram<br><b>Rehearse</b>
+          Foto<br><b>Rehearse</b>
         </div>
         <div class="buttons">
           <div v-if="isDesktop" class="icon button" @click="openPopup">
@@ -74,7 +74,7 @@
           <a href="https://github.com/antfu"> Anthony Fu</a>
         </div>
         <div class="powered">
-          Powered by
+          powered by
           <a href="https://github.com/vuejs/vite">vite</a>
           ,
           <a href="https://github.com/antfu/vueuse">vueuse</a>
