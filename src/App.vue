@@ -1,98 +1,110 @@
 <template>
-  <div class="app" :class="{dark}">
+  <div class="app" :class="{dark, shooting}">
     <div id="phone-case" :style="caseStyle">
-      <div class="nav">
-        <div v-if="width > 300" class="header">
-          Foto<br><b>Rehearse</b>
+      <div id="phone-case-inner">
+        <div class="nav">
+          <div v-if="width > 300" class="header">
+            Foto<br><b>Rehearse</b>
+          </div>
+          <div v-show="!shooting" class="buttons">
+            <div class="icon button" @click="shoot">
+              <span class="iconify" data-icon="mdi-light:camera" />
+            </div>
+
+            <div v-if="isDesktop" class="icon button" @click="openPopup">
+              <span class="iconify" data-icon="mdi-light:arrange-send-backward" />
+            </div>
+
+            <div class="icon button" @click="addFront">
+              <span class="iconify" data-icon="mdi-light:plus-circle" />
+            </div>
+
+            <div class="icon button" @click="dark = !dark">
+              <div v-show="dark">
+                <span class="iconify" data-icon="mdi-light:lightbulb-on" />
+              </div>
+              <div v-show="!dark">
+                <span class="iconify" data-icon="mdi-light:lightbulb" />
+              </div>
+            </div>
+
+            <div class="icon button" @click="gap = gap ? 0 : 3">
+              <div v-show="gap">
+                <span class="iconify" data-icon="mdi-light:border-all" />
+              </div>
+              <div v-show="!gap">
+                <span class="iconify" data-icon="mdi-light:border-outside" />
+              </div>
+            </div>
+
+            <div class="icon button" @click="imageMode = (imageMode +1) % 3">
+              <div v-show="imageMode == 0">
+                <span class="iconify" data-icon="mdi-light:picture" />
+              </div>
+              <div v-show="imageMode == 1">
+                <span class="iconify" data-icon="mdi-light:flask-empty" />
+              </div>
+              <div v-show="imageMode == 2">
+                <span class="iconify" data-icon="mdi-light:flask" />
+              </div>
+            </div>
+
+            <div class="icon button" @click="tab = (tab + 1) % 3">
+              <span class="iconify" data-icon="mdi-light:shape-hexagon" />
+              <span class="number">{{ tab+1 }}</span>
+            </div>
+          </div>
         </div>
-        <div class="buttons">
-          <div v-if="isDesktop" class="icon button" @click="openPopup">
-            <span class="iconify" data-icon="mdi-light:arrange-send-backward" />
-          </div>
 
-          <div class="icon button" @click="addFront">
-            <span class="iconify" data-icon="mdi-light:plus-circle" />
-          </div>
-
-          <div class="icon button" @click="dark = !dark">
-            <div v-show="dark">
-              <span class="iconify" data-icon="mdi-light:lightbulb-on" />
+        <div class="grid" :style="{ gridGap: `${gap}px` }">
+          <post
+            v-for="(post, idx) in posts"
+            :key="idx"
+            :post="post"
+            :size="size"
+            :mode="imageMode"
+            :shooting="shooting"
+            :draggable="true"
+            @drop.native="e=>drop(idx, e)"
+            @dragend.native="dragend"
+            @dragover.native="allowDrop"
+            @dragenter.native="allowDrop"
+            @dragstart.native="e=>drag(idx, e)"
+            @upload="urls=>handleUploaded(idx,urls)"
+          />
+          <post
+            v-show="!shooting"
+            :size="size"
+            @click.native="add"
+          >
+            <div class="icon">
+              <span class="iconify" data-icon="mdi-light:plus-circle" />
             </div>
-            <div v-show="!dark">
-              <span class="iconify" data-icon="mdi-light:lightbulb" />
-            </div>
-          </div>
-
-          <div class="icon button" @click="gap = gap ? 0 : 3">
-            <div v-show="gap">
-              <span class="iconify" data-icon="mdi-light:border-all" />
-            </div>
-            <div v-show="!gap">
-              <span class="iconify" data-icon="mdi-light:border-outside" />
-            </div>
-          </div>
-
-          <div class="icon button" @click="imageMode = (imageMode +1) % 3">
-            <div v-show="imageMode == 0">
-              <span class="iconify" data-icon="mdi-light:picture" />
-            </div>
-            <div v-show="imageMode == 1">
-              <span class="iconify" data-icon="mdi-light:flask-empty" />
-            </div>
-            <div v-show="imageMode == 2">
-              <span class="iconify" data-icon="mdi-light:flask" />
-            </div>
-          </div>
-
-          <div class="icon button" @click="tab = (tab + 1) % 3">
-            <span class="iconify" data-icon="mdi-light:shape-hexagon" />
-            <span class="number">{{ tab+1 }}</span>
-          </div>
+          </post>
         </div>
-      </div>
 
-      <div class="grid" :style="{ gridGap: `${gap}px` }">
-        <post
-          v-for="(post, idx) in posts"
-          :key="idx"
-          :post="post"
-          :size="size"
-          :mode="imageMode"
-          :draggable="true"
-          @drop.native="e=>drop(idx, e)"
-          @dragend.native="dragend"
-          @dragover.native="allowDrop"
-          @dragenter.native="allowDrop"
-          @dragstart.native="e=>drag(idx, e)"
-          @upload="urls=>handleUploaded(idx,urls)"
-        />
-        <post :size="size" @click.native="add">
-          <div class="icon">
-            <span class="iconify" data-icon="mdi-light:plus-circle" />
+        <div v-if="!shooting" class="footer">
+          <div class="author">
+            by
+            <a href="https://www.instagram.com/antfu7">@antfu</a>
+            for
+            <a href="https://www.instagram.com/iiiiiiines__">@ines</a>
           </div>
-        </post>
-      </div>
-
-      <div class="footer">
-        <div class="author">
-          by
-          <a href="https://www.instagram.com/antfu7">@antfu</a>
-          for
-          <a href="https://www.instagram.com/iiiiiiines__">@ines</a>
-        </div>
-        <div class="powered">
-          powered by
-          <a href="https://github.com/vuejs/vite">vite</a>
-          ,
-          <a href="https://github.com/antfu/vueuse">vueuse</a>
-          and
-          <a>♥️</a>
-          ・
-          source on <a href="https://github.com/antfu/foto-rehearse">Github</a>
+          <div class="powered">
+            powered by
+            <a href="https://github.com/vuejs/vite">vite</a>
+            ,
+            <a href="https://github.com/antfu/vueuse">vueuse</a>
+            and
+            <a>♥️</a>
+            ・
+            source on <a href="https://github.com/antfu/foto-rehearse">Github</a>
+          </div>
         </div>
       </div>
     </div>
     <div
+      v-show="!shooting"
       class="trashbin"
       :class="{active:dragging}"
       :style="caseStyle"
@@ -107,8 +119,8 @@
 
 <script>
 /* eslint-disable no-self-assign */
-import { computed, ref, watch } from 'vue'
-import { useWindowSize, loadPosts, savePosts, openDb, popup, useStorage, CONFIG_PREFIX } from './utils.js'
+import { computed, ref, watch, nextTick } from 'vue'
+import { useWindowSize, loadPosts, savePosts, openDb, popup, useStorage, CONFIG_PREFIX, takeScreenshot } from './utils.js'
 import Post from './Post.vue'
 
 export default {
@@ -123,6 +135,7 @@ export default {
     const { width, height } = useWindowSize()
     const posts = ref([])
     const dragging = ref(false)
+    const shooting = ref(false)
     const imageMode = ref(0) // 0: photo, 1: thief, 2: pattele
     let db
 
@@ -192,6 +205,13 @@ export default {
     const openPopup = () => {
       popup(location.href, 'igre', caseWidth.value, height.value, true)
     }
+    const shoot = () => {
+      shooting.value = true
+      nextTick(() => {
+        takeScreenshot()
+        shooting.value = false
+      })
+    }
 
     watch(
       posts,
@@ -210,6 +230,7 @@ export default {
     )
 
     return {
+      shoot,
       height,
       width,
       gap,
@@ -217,6 +238,7 @@ export default {
       dragging,
       tab,
       size,
+      shooting,
       isDesktop,
       caseStyle,
       caseWidth,
@@ -304,6 +326,9 @@ a
     transform translate(-50%, -50%) translateX(-1px)
     font-size 0.8rem
     user-select none
+
+#phone-case-inner
+  background var(--theme-background)
 
 #phone-case
   background var(--theme-background)

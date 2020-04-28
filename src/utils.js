@@ -18,6 +18,24 @@ function useEventListener(type, listener, options, target) {
   })
 }
 
+export async function takeScreenshot(
+  selector = '#phone-case-inner',
+  filename = `foto-rehearsal-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.png`,
+) {
+  return new Promise((resolve) => {
+    window.html2canvas(
+      document.querySelector(selector),
+      { scale: 4 },
+    )
+      .then((canvas) => {
+        canvas.toBlob((blob) => {
+          window.saveAs(blob, filename)
+          resolve()
+        })
+      })
+  })
+}
+
 export function useWindowSize() {
   const width = ref(window.innerWidth)
   const height = ref(window.innerHeight)

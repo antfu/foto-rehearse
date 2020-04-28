@@ -20,11 +20,12 @@ Powered by <a href='https://github.com/vuejs/vite'>Vite</a>, <a href='https://gi
 
 - [x] Batch importing
 - [x] Drag'n'Drop
-- [x] Data Presistant (via IndexedDB)
+- [x] Data persistent (via IndexedDB)
 - [x] Sessions/Tabs
 - [x] Dark mode
 - [x] Color Palettes
 - [x] HSV info
+- [x] Take screenshot 
 - [ ] Crop
 - [ ] Guide/Help
 

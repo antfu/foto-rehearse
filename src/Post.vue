@@ -26,6 +26,7 @@ export default {
   props: {
     size: { type: Number, default: 0 },
     mode: { type: Number, default: 0 },
+    shooting: { type: Boolean, default: false },
     post: { type: Object, default: () => ({ url: '' }) },
   },
   setup(props, ctx) {
@@ -56,6 +57,9 @@ export default {
 
         else if (props.mode === 1 || props.mode === 2)
           obj.backgroundColor = colors.value[0]
+      }
+      else if (props.shooting) {
+        obj.backgroundColor = 'transparent'
       }
       return obj
     })
@@ -150,7 +154,7 @@ export default {
       border-radius 50%
 
   .info
-    font-family monospace
+    font-family 'Inconsolata', monospace
     padding 1rem
     margin 0
     opacity 0
