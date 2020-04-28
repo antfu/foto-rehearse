@@ -2,9 +2,19 @@
 <img src='https://user-images.githubusercontent.com/11247099/80476156-94958b80-897c-11ea-8998-017ac7f552de.png' alt='intro'>
 </p>
 
-Photography post planner. Powered by [Vue Vite](https://github.com/vuejs/vite), [VueUse](https://github.com/antfu/vueuse) and ♥️ with the new [Vue Composition API](https://composition-api.vuejs.org/)!
+<p align='center'>
 
-Check out the [App](https://igre.netlify.app)!
+Free and Open photography post planner.
+
+Powered by [Vue Vite](https://github.com/vuejs/vite), [VueUse](https://github.com/antfu/vueuse) and ♥️ with the new [Vue Composition API](https://composition-api.vuejs.org/)!
+
+</p>
+
+<p align='center'>
+
+Check out the [App](https://fore.netlify.app)!
+
+</p>
 
 ## Checklist
 
@@ -14,7 +24,7 @@ Check out the [App](https://igre.netlify.app)!
 - [x] Sessions/Tabs
 - [x] Dark mode
 - [x] Color Palettes
-- [ ] HSV info
+- [x] HSV info
 - [ ] Crop
 - [ ] Guide/Help
 
