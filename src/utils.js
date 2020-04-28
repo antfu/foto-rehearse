@@ -1,6 +1,9 @@
 /* eslint-disable no-alert */
 import { ref, onMounted, onUnmounted } from 'vue'
 
+const DEFAULT_POSTS = 8
+const STORE_PREFIX = 'instagram-rehearser-posts'
+
 function useEventListener(type, listener, options, target) {
   if (target === undefined) target = window
   onMounted(() => {
@@ -20,8 +23,6 @@ export function useWindowSize() {
   })
   return { width, height }
 }
-
-const STORE_PREFIX = 'instagram-rehearser-posts'
 
 export function openDb() {
   return new Promise((resolve) => {
@@ -52,8 +53,11 @@ export function loadPosts(db, tab = 0) {
     const request = store.getAll()
     request.onsuccess = () => {
       let posts = request.result
-      if (!posts || !posts.length)
-        posts = new Array(15).fill(null).map((_, id) => ({ id, url: '' }))
+      if (!posts || !posts.length) {
+        posts = new Array(DEFAULT_POSTS)
+          .fill(null)
+          .map((_, id) => ({ id, url: '' }))
+      }
       posts.sort((a, b) => a.id - b.id)
       resolve(posts)
     }

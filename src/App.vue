@@ -2,8 +2,8 @@
   <div class="app" :class="{dark}">
     <div class="phone-case" :style="caseStyle">
       <div class="nav">
-        <div class="header">
-          Instagram<br><b>Rehearser</b>
+        <div v-if="width > 300" class="header">
+          Instagram<br><b>Rehearse</b>
         </div>
         <div class="buttons">
           <div v-if="isDesktop" class="icon button" @click="openPopup">
@@ -13,7 +13,12 @@
             <span class="iconify" data-icon="mdi-light:plus-circle" />
           </div>
           <div class="icon button" @click="dark = !dark">
-            <span class="iconify" data-icon="mdi-light:lightbulb" />
+            <div v-show="dark">
+              <span class="iconify" data-icon="mdi-light:lightbulb-on" />
+            </div>
+            <div v-show="!dark">
+              <span class="iconify" data-icon="mdi-light:lightbulb" />
+            </div>
           </div>
           <div class="icon button" @click="gap = gap ? 0 : 3">
             <span class="iconify" data-icon="mdi-light:border-outside" />
@@ -47,16 +52,17 @@
       </div>
 
       <div class="footer">
-        Powered by
-        <a href="https://github.com/vuejs/vite">vite</a>
-        ,
-        <a href="https://github.com/antfu/vueuse">vueuse</a>
-        and
-        <a>♥️</a>
-
         <div class="author">
           by
           <a href="https://github.com/antfu"> Anthony Fu</a>
+        </div>
+        <div class="powered">
+          Powered by
+          <a href="https://github.com/vuejs/vite">vite</a>
+          ,
+          <a href="https://github.com/antfu/vueuse">vueuse</a>
+          and
+          <a>♥️</a>
         </div>
       </div>
     </div>
@@ -100,7 +106,7 @@ export default {
 
     const PHONE_RATIO = 0.55
     const isDesktop = computed(() => {
-      return width.value / height.value > PHONE_RATIO
+      return width.value > 500 && width.value / height.value > PHONE_RATIO
     })
     const caseWidth = computed(() => {
       return isDesktop.value ? height.value * PHONE_RATIO - 5 : width.value
@@ -167,6 +173,8 @@ export default {
     )
 
     return {
+      height,
+      width,
       gap,
       dark,
       dragging,
@@ -273,7 +281,7 @@ a
   .nav
     margin-bottom 0.3rem
     display grid
-    grid-template-columns max-content auto max-content
+    grid-template-columns max-content auto
 
     & > *
       margin auto 0
@@ -284,10 +292,20 @@ a
       font-weight 100
       line-height 1.3rem
 
+    .buttons
+      padding 1rem 0
+
+      &:first-child
+        padding 1rem
+
   .footer
     padding 1rem
     font-size 0.9rem
     color var(--theme-foreground)
+
+    .powered
+      font-size 0.8rem
+      opacity 0.8
 
   .grid
     display grid
