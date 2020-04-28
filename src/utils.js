@@ -220,6 +220,7 @@ export function popup(url, name, width, height, close = false) {
   if (close) {
     window.open('', '_parent', '')
     window.close()
+    location.href = 'about:blank'
   }
 }
 
