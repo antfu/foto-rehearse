@@ -18,16 +18,9 @@
           <div class="icon button" @click="gap = gap ? 0 : 3">
             <span class="iconify" data-icon="mdi-light:border-outside" />
           </div>
-        </div>
-        <div class="tabs">
-          <div class="tab" :class="{active: tab===0}" @click="tab=0">
-            1
-          </div>
-          <div class="tab" :class="{active: tab===1}" @click="tab=1">
-            2
-          </div>
-          <div class="tab" :class="{active: tab===2}" @click="tab=2">
-            3
+          <div class="icon button" @click="tab = (tab + 1) % 3">
+            <span class="iconify" data-icon="mdi-light:shape-circle" />
+            <span class="number">{{ tab+1 }}</span>
           </div>
         </div>
       </div>
@@ -246,12 +239,22 @@ a
 
 .icon.button
   display inline-block
-  font-size 1.2rem
+  font-size 1.4rem
   cursor pointer
   padding 0.3rem
+  position relative
 
   &:hover
     background #8881
+
+  .number
+    position absolute
+    left 50%
+    top 50%
+    text-align center
+    transform translate(-50%, -50%) translateX(-0.5px)
+    font-size 0.8rem
+    user-select none
 
 .phone-case
   background var(--theme-background)
