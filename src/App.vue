@@ -138,8 +138,17 @@ export default {
       width: `${caseWidth.value}px`,
     }))
     const handleUploaded = (index, urls) => {
-      for (let i = 0; i < urls.length; i++)
-        posts.value[i + index].url = urls[i]
+      for (let i = 0; i < urls.length; i++) {
+        // append to tail
+        if (!posts.value[i + index])
+          posts.value.push({ url: urls[i] })
+        // insert into middle
+        else if (posts.value[i + index].url)
+          posts.value.splice(i + index, 0, { url: urls[i] })
+        // replace empty
+        else
+          posts.value[i + index].url = urls[i]
+      }
     }
     const drop = (to, e) => {
       dragging.value = false
