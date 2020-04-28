@@ -80,6 +80,8 @@
           <a href="https://github.com/antfu/vueuse">vueuse</a>
           and
           <a>♥️</a>
+          ・
+          source on <a href="https://github.com/antfu/foto-rehearse">Github</a>
         </div>
       </div>
     </div>
@@ -222,8 +224,9 @@ export default {
   --theme-primary #d37070
   --post-width 100px
   --theme-foreground #000d
+  --theme-foreground-fade #0006
   --theme-background white
-  --theme-shadow #0001
+  --theme-shadow #00000008
 
 html, body, .app
   user-select none
@@ -240,6 +243,7 @@ html, body, .app
   &.dark
     --theme-foreground white
     --theme-background black
+    --theme-foreground-fade #fff8
     --theme-shadow #ffffff18
 
 a
@@ -280,7 +284,7 @@ a
     left 50%
     top 50%
     text-align center
-    transform translate(-50%, -50%) translateX(-0.5px)
+    transform translate(-50%, -50%) translateX(-1px)
     font-size 0.8rem
     user-select none
 
@@ -321,11 +325,10 @@ a
   .footer
     padding 1rem
     font-size 0.9rem
-    color var(--theme-foreground)
+    color var(--theme-foreground-fade)
 
     .powered
       font-size 0.8rem
-      opacity 0.8
 
   .grid
     display grid
