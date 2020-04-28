@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { getDataUrls, getColors } from './utils.js'
 
 export default {
@@ -51,9 +51,10 @@ export default {
 
     const dotsStyle = computed(() => {
       return {
+        backgroundColor: colors.value[0],
         height: `${(props.size - gap.value * 5) / 4}px`,
         gridGap: `${gap.value}px`,
-        margin: `${gap.value}px`,
+        padding: `${gap.value}px`,
       }
     })
 
@@ -100,8 +101,8 @@ export default {
     bottom 0
     right 0
     display grid
-    height 30px
     grid-template-columns 1fr 1fr 1fr 1fr
-    grid-gap 5px
-    margin 5px
+
+    .dot
+      border-radius 50%
 </style>
