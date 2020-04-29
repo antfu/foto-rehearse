@@ -16,7 +16,7 @@
       </div>
     </slot>
     <img
-      v-show="mode === 0 && loaded"
+      v-show="mode === 0 && loaded && post.url"
       class="image"
       :style="imageStyle"
       :src="post.url"

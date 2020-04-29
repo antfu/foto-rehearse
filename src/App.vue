@@ -7,37 +7,37 @@
             Foto<br><b>Rehearse</b>
           </div>
           <div v-show="!shooting" class="buttons">
-            <div class="icon button" @click="shoot">
+            <button type="button" class="icon button" title="Take Screenshot" @click="shoot">
               <span class="iconify" data-icon="mdi-light:camera" />
-            </div>
+            </button>
 
-            <div v-if="isDesktop && !inPopup" class="icon button" @click="openPopup">
+            <button v-if="isDesktop && !inPopup" type="button" class="icon button" title="Popup" @click="openPopup">
               <span class="iconify" data-icon="mdi-light:arrange-send-backward" />
-            </div>
+            </button>
 
-            <div class="icon button" @click="addFront">
+            <button type="button" class="icon button" title="New Post" @click="addFront">
               <span class="iconify" data-icon="mdi-light:plus-circle" />
-            </div>
+            </button>
 
-            <div class="icon button" @click="dark = !dark">
+            <button type="button" class="icon button" :title="dark ? 'Light Mode' : 'Dark Mode'" @click="toggleDark">
               <div v-show="dark">
                 <span class="iconify" data-icon="mdi-light:lightbulb-on" />
               </div>
               <div v-show="!dark">
                 <span class="iconify" data-icon="mdi-light:lightbulb" />
               </div>
-            </div>
+            </button>
 
-            <div class="icon button" @click="gap = gap ? 0 : 3">
+            <button type="button" class="icon button" title="Toggle Gap" @click="toggleGap">
               <div v-show="gap">
                 <span class="iconify" data-icon="mdi-light:border-all" />
               </div>
               <div v-show="!gap">
                 <span class="iconify" data-icon="mdi-light:border-outside" />
               </div>
-            </div>
+            </button>
 
-            <div class="icon button" @click="imageMode = (imageMode +1) % 3">
+            <button type="button" class="icon button" title="Switch mode" @click="switchMode">
               <div v-show="imageMode == 0">
                 <span class="iconify" data-icon="mdi-light:picture" />
               </div>
@@ -47,12 +47,12 @@
               <div v-show="imageMode == 2">
                 <span class="iconify" data-icon="mdi-light:flask" />
               </div>
-            </div>
+            </button>
 
-            <div class="icon button" @click="tab = (tab + 1) % 3">
-              <span class="iconify" data-icon="mdi-light:shape-hexagon" />
+            <button type="button" class="icon button" title="Switch Tabs" @click="switchTab">
+              <span class="iconify" data-icon="mdi-light:shape-circle" />
               <span class="number">{{ tab+1 }}</span>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -103,6 +103,9 @@
         </div>
       </div>
     </div>
+    <div class="toast" :class="{ active: !!toast }">
+      {{ toast }}
+    </div>
     <div
       v-show="!shooting"
       class="trashbin"
@@ -112,7 +115,7 @@
       @dragenter.native="allowDrop"
       @dragover.native="allowDrop"
     >
-      Remove
+      Drop here to Remove
     </div>
   </div>
 </template>
@@ -122,6 +125,8 @@
 import { computed, ref, watch, nextTick } from 'vue'
 import { useWindowSize, loadPosts, savePosts, openDb, popup, useStorage, CONFIG_PREFIX, takeScreenshot } from './utils.js'
 import Post from './Post.vue'
+
+const TOAST_TIMEOUT = 2500
 
 export default {
   components: {
@@ -137,8 +142,10 @@ export default {
     const dragging = ref(false)
     const shooting = ref(false)
     const locked = ref(false)
+    const toast = ref('')
     const imageMode = ref(0) // 0: photo, 1: thief, 2: pattele
     let db
+    let toastTimer
 
     openDb().then(async(i) => {
       db = i
@@ -210,15 +217,33 @@ export default {
     }
     const openPopup = async() => {
       locked.value = true
+      toast.value = 'Poped'
       await popup(location.href, 'foto-rehearse', caseWidth.value, height.value)
       location.reload()
     }
     const shoot = () => {
       shooting.value = true
+      toast.value = 'Taking Screenshot'
       nextTick(() => {
         takeScreenshot()
         shooting.value = false
       })
+    }
+    const toggleDark = () => {
+      dark.value = !dark.value
+      toast.value = dark.value ? 'Dark mode' : 'Light mode'
+    }
+    const toggleGap = () => {
+      gap.value = gap.value ? 0 : 3
+      toast.value = gap.value ? 'Gap on' : 'Gap off'
+    }
+    const switchMode = () => {
+      imageMode.value = (imageMode.value + 1) % 3
+      toast.value = ['Image mode', 'Color mode', 'Pattle mode'][imageMode.value]
+    }
+    const switchTab = () => {
+      tab.value = (tab.value + 1) % 3
+      toast.value = `Tab ${tab.value + 1}`
     }
 
     watch(
@@ -237,12 +262,25 @@ export default {
       },
     )
 
+    watch(
+      toast,
+      () => {
+        if (toast.value) {
+          clearTimeout(toastTimer)
+          toastTimer = setTimeout(() => {
+            toast.value = ''
+          }, TOAST_TIMEOUT)
+        }
+      },
+    )
+
     return {
       inPopup: window.name === 'foto-rehearse',
       shoot,
       height,
       width,
       gap,
+      toast,
       dark,
       dragging,
       tab,
@@ -263,6 +301,10 @@ export default {
       add,
       addFront,
       imageMode,
+      toggleDark,
+      toggleGap,
+      switchMode,
+      switchTab,
     }
   },
 }
@@ -324,9 +366,16 @@ a
   cursor pointer
   padding 0.3rem
   position relative
+  background none
+  border none
+  outline none
+  border-radius 2px
+  text-align center
+  line-height 1.4rem
+  color inherit
 
   &:hover
-    background #8881
+    background var(--theme-shadow)
 
   .number
     position absolute
@@ -401,4 +450,44 @@ a
 
   &.active
     transform translate(-50%, 0)
+
+.toast
+  position fixed
+  bottom 20vh
+  left 50%
+  transform translate(-50%, 100%)
+  padding 0.7rem 1rem
+  min-width 200px
+  text-align center
+  transition .2s ease-in-out
+  pointer-events none
+  opacity 0
+  font-size 1.1rem
+  color var(--theme-foregroud)
+
+  &.active
+    opacity 1
+
+  &::before
+    content ''
+    position absolute
+    top 0
+    left 0
+    right 0
+    bottom 0
+    opacity 0.7
+    z-index -1
+    border-radius 0.3rem
+    background var(--theme-background)
+
+  &::after
+    content ''
+    position absolute
+    top 0
+    left 0
+    right 0
+    bottom 0
+    z-index -1
+    border-radius 0.3rem
+    border 1px solid var(--theme-background)
 </style>
