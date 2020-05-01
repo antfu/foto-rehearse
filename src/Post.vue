@@ -6,7 +6,7 @@
         class="upload"
         type="file"
         multiple
-        accept="*/image"
+        accept="image/*"
         title=" "
         @change="onImageSelect"
       >
