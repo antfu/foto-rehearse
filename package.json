@@ -20,6 +20,6 @@
     "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",
     "typescript": "^3.8.3",
-    "vite": "^0.5.1"
+    "vite": "^0.20.0"
   }
 }
